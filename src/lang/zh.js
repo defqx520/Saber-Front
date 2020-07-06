@@ -1,6 +1,6 @@
 export default {
   tip: '提示',
-  title: 'Saber企业级开发平台',
+  title: '导弹大数据开发平台',
   logoutTip: '退出系统, 是否继续?',
   submitText: '确定',
   cancelText: '取消',
@@ -49,7 +49,7 @@ export default {
   },
   route: {
     info: '个人信息',
-    website: 'bladex官网',
+    website: '百度官网',
     avuexwebsite: 'avuex官网',
     dashboard: '首页',
     tags: '标签',
@@ -65,7 +65,7 @@ export default {
   },
   login: {
     title: '登录 ',
-    info: '企业级开发平台',
+    info: '导弹大数据开发平台',
     tenantId: '请输入租户ID',
     username: '请输入账号',
     password: '请输入密码',

@@ -9,13 +9,13 @@ const top = [{
   },
   parentId: 0
 },
-  {
-    label: "bladex官网",
+  /*{
+    label: "百度官网",
     icon: 'el-icon-document',
     meta: {
       i18n: 'website',
     },
-    path: "https://bladex.vip/#/",
+    path: "https://www.baidu.com",
     parentId: 1
   },
   {
@@ -35,7 +35,7 @@ const top = [{
       i18n: 'test',
     },
     parentId: 3
-  }]
+  }*/]
 export default ({mock}) => {
   if (!mock) return;
   Mock.mock('/user/getTopMenu', 'get', () => {
