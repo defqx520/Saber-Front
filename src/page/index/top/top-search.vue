@@ -77,8 +77,7 @@ export default {
     createFilter(queryString) {
       return restaurant => {
         return (
-          restaurant.name.toLowerCase().indexOf(queryString.toLowerCase()) ===
-          0
+          restaurant.name.toLowerCase().indexOf(queryString.toLowerCase()) >= 0
         );
       };
     },
