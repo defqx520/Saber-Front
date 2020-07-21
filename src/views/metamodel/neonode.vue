@@ -25,9 +25,48 @@
             label: '标签',
             prop: "label",
             span:12,
-            row: true
-          },
-          {
+            row: true,
+            tip:'标签定义节点的类别',
+            tipPlacement:'right',
+            rules: [{
+              required: true,
+              message: "请输入标签",
+              trigger: "blur"
+            }]
+          }, {
+            label: '节点名称',
+            prop: "neoName",
+            span:12,
+            row: true,
+            tip:'节点名称用于节点的展示,建议不要重复',
+            tipPlacement:'right',
+            rules: [{
+              required: true,
+              message: "请输入节点名称",
+              trigger: "blur"
+            }]
+          }, {
+            label: '结果展示形式',
+            type:"select",
+            prop: "neoResType",
+            span:12,
+            row: true,
+            dicData:[{
+              label:'表格',
+              value:'table'
+            },{
+              label:'表单',
+              value:'form'
+            },{
+              label:'文件',
+              value:'file'
+            }],
+            rules: [{
+              required: true,
+              message: "请选择结果展示形式",
+              trigger: "blur"
+            }]
+          },{
             label: '属性映射',
             prop: 'dynamic',
             type: 'dynamic',
@@ -62,16 +101,31 @@
     },
 
     methods:{
+      //新增节点的提交方法
       handleSubmit(form, done){
-        add(this.obj).then(() => {
+        let params = {
+          label: this.obj.label,
+          neoName: this.obj.neoName,
+          neoResType: this.obj.neoResType
+        }
+        const dynamic_ = this.obj.dynamic;
+        let other = [];
+        for(let index in dynamic_){
+          if(dynamic_[index].key){
+            other.push({key:(dynamic_[index].key) ,value: dynamic_[index].value});
+          }
+        }
+        params.other = other;
+        add(params).then((result) => {
           done();
-          this.$message({
-            type: "success",
-            message: "操作成功!"
-          });
-
+          if(result.data.code==200){
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+            //如何提交成功后清空表单？
+          }
         });
-        // this.$message.success(JSON.stringify(this.obj))
       }
     }
   };

@@ -27,7 +27,12 @@
             type: "select",
             dicUrl: "/api/blade-neo4j/select",
             span:12,
-            row: true
+            row: true,
+            rules: [{
+              required: true,
+              message: "请选择关系开始的节点",
+              trigger: "blur"
+            }]
           },
           {
             label: '关系结束节点',
@@ -35,13 +40,38 @@
             type: "select",
             dicUrl: "/api/blade-neo4j/select",
             span:12,
-            row: true
+            row: true,
+            rules: [{
+              required: true,
+              message: "请选择关系结束的节点",
+              trigger: "blur"
+            }]
           },
           {
             label: '标签',
             prop: "label",
+            type: "select",
             span:12,
-            row: true
+            row: true,
+            dicData: [{
+              label:'输入',
+              value:'输入'
+            },{
+              label:'输出',
+              value:'输出'
+            },{
+              label:'资源',
+              value:'资源'
+            },{
+              label:'约束',
+              value:'约束'
+            }],
+            rules: [{
+              required: true,
+              message: "请输入标签",
+              trigger: "blur"
+            }]
+
           },
           {
             label: '属性映射',
@@ -77,17 +107,31 @@
       }
     },
     methods:{
+      //新增关系的提交方法
       handleSubmit(form,done){
-        console.log(this.obj);
-        console.log();
-        addRelation(this.obj).then(() => {
+        let params = {
+          startNode: this.obj.startNode,
+          endNode: this.obj.endNode,
+          label: this.obj.label,
+          neoName: this.obj.label   //默认使用选择的label作为关系的展示名称
+        }
+        const dynamic_ = this.obj.dynamic;
+        let other = [];
+        for(let index in dynamic_){
+          if(dynamic_[index].key){
+            other.push({key:(dynamic_[index].key) ,value: dynamic_[index].value});
+          }
+        }
+        params.other = other;
+        addRelation(params).then((result) => {
           done();
-          this.$message({
-            type: "success",
-            message: "操作成功!"
-          });
+          if(result.data.code==200){
+            this.$message({
+              type: "success",
+              message: "操作成功!"
+            });
+          }
         });
-        // this.$message.success(JSON.stringify(this.obj))
       }
     }
   };
