@@ -32,7 +32,6 @@
   //按需引入
   import { DataSet, Network } from 'vis/index-network';
   import { loadNetworkData, getNodeById } from "../../api/metamodel/neonode";
-  import QS from 'qs';
 
   let _this;
 

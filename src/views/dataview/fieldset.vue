@@ -1,132 +1,148 @@
 <template>
   <basic-container>
-    <avue-crud :option="option"
+    <avue-crud :option="infoOption"
                :table-loading="loading"
                :data="data"
-               ref="crud"
-               v-model="form"
+               :page="page"
                :permission="permissionList"
                :before-open="beforeOpen"
-               @row-del="rowDel"
+               v-model="form"
+               ref="crud"
                @row-update="rowUpdate"
                @row-save="rowSave"
+               @row-del="rowDel"
                @search-change="searchChange"
                @search-reset="searchReset"
                @selection-change="selectionChange"
                @current-change="currentChange"
                @size-change="sizeChange"
                @on-load="onLoad">
-      <template slot="menuLeft">
-        <el-button type="danger"
-                   size="small"
-                   icon="el-icon-delete"
-                   v-if="permission.dict_delete"
-                   plain
-                   @click="handleDelete">删 除
-        </el-button>
-      </template>
-      <template slot-scope="scope" slot="menu">
-        <el-button
-          type="text"
-          icon="el-icon-circle-plus-outline"
-          size="small"
-          @click.stop="handleAdd(scope.row,scope.index)"
-          v-if="userInfo.authority.includes('admin')"
-        >新增子项
-        </el-button>
-      </template>
     </avue-crud>
   </basic-container>
 </template>
 
 <script>
-  import {add, getDict, getDictTree, getList, remove, update} from "@/api/system/dict";
+  import {getList, getDetail, add, update, remove} from "@/api/dataview/fieldset";
   import {mapGetters} from "vuex";
 
   export default {
+    name: "fieldset",
     data() {
       return {
         form: {},
-        selectionList: [],
-        loading: true,
         query: {},
+        loading: true,
         page: {
           pageSize: 10,
           currentPage: 1,
           total: 0
         },
+        selectionList: [],
         option: {
+          height: 'auto',
+          calcHeight: 210,
           searchShow: true,
           searchMenuSpan: 6,
           tip: false,
-          tree: true,
           border: true,
           index: true,
-          selection: true,
           viewBtn: true,
-          menuWidth: 300,
+          selection: true,
           column: [
             {
-              label: "字典编号",
-              prop: "code",
-              search: true,
-              span: 24,
+              label: "",
+              prop: "id",
               rules: [{
                 required: true,
-                message: "请输入字典编号",
+                message: "请输入",
                 trigger: "blur"
               }]
             },
             {
-              label: "字典名称",
-              prop: "dictValue",
-              search: true,
+              label: "指标名称",
+              prop: "columnName",
               rules: [{
                 required: true,
-                message: "请输入字典名称",
+                message: "请输入指标名称",
                 trigger: "blur"
               }]
             },
             {
-              label: "上级字典",
-              prop: "parentId",
-              type: "tree",
-              dicData: [],
-              hide: true,
+              label: "指标类型",
+              type: "select",
+              dicUrl: "/api/blade-system/dict/dictionary?code=data_field_type",
               props: {
-                label: "title"
+                label: "dictValue",
+                value: "dictKey"
               },
-              rules: [{
-                required: false,
-                message: "请选择上级字典",
-                trigger: "click"
-              }]
-            },
-            {
-              label: "字典键值",
-              prop: "dictKey",
+              slot: true,
+              prop: "columnType",
               rules: [{
                 required: true,
-                message: "请输入字典键值",
+                message: "请输入指标类型",
                 trigger: "blur"
               }]
             },
             {
-              label: "字典排序",
-              prop: "sort",
-              type: "number",
+              label: "指标长度",
+              prop: "columnLength",
               rules: [{
                 required: true,
-                message: "请输入字典排序",
+                message: "请输入指标长度",
                 trigger: "blur"
               }]
             },
             {
-              label: "字典备注",
-              prop: "remark",
-              search: true,
-              span: 24,
-              hide: true,
+              label: "小数点位数",
+              prop: "columnPoint",
+              rules: [{
+                required: true,
+                message: "请输入小数点位数",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "",
+              prop: "columnDefaultValue",
+              rules: [{
+                required: true,
+                message: "请输入",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "指标注释",
+              prop: "columnNote",
+              rules: [{
+                required: true,
+                message: "请输入指标注释",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "是否允许为空",
+              type: "select",
+              dicUrl: "/api/blade-system/dict/dictionary?code=yes_no",
+              props: {
+                label: "dictValue",
+                value: "dictKey"
+              },
+              slot: true,
+              prop: "columnIsnull",
+              rules: [{
+                required: true,
+                message: "请输入是否允许为空",
+                trigger: "blur"
+              }]
+            },
+            {
+              label: "所属专业",
+              prop: "datanodeId",
+              rules: [{
+                required: true,
+                message: "请输入所属专业",
+                trigger: "blur"
+              }]
             },
           ]
         },
@@ -134,13 +150,13 @@
       };
     },
     computed: {
-      ...mapGetters(["userInfo", "permission"]),
+      ...mapGetters(["permission"]),
       permissionList() {
         return {
-          addBtn: this.vaildData(this.permission.dict_add, false),
-          viewBtn: this.vaildData(this.permission.dict_view, false),
-          delBtn: this.vaildData(this.permission.dict_delete, false),
-          editBtn: this.vaildData(this.permission.dict_edit, false)
+          addBtn: this.vaildData(this.permission.fieldset_add, false),
+          viewBtn: this.vaildData(this.permission.fieldset_view, false),
+          delBtn: this.vaildData(this.permission.fieldset_delete, false),
+          editBtn: this.vaildData(this.permission.fieldset_edit, false)
         };
       },
       ids() {
@@ -152,21 +168,6 @@
       }
     },
     methods: {
-      handleAdd(row) {
-        this.$refs.crud.value.code = row.code;
-        this.$refs.crud.value.parentId = row.id;
-        this.$refs.crud.option.column.filter(item => {
-          if (item.prop === "code") {
-            item.value = row.code;
-            item.addDisabled = true;
-          }
-          if (item.prop === "parentId") {
-            item.value = row.id;
-            item.addDisabled = true;
-          }
-        });
-        this.$refs.crud.rowAdd();
-      },
       rowSave(row, done, loading) {
         add(row).then(() => {
           done();
@@ -210,19 +211,6 @@
             });
           });
       },
-      searchReset() {
-        this.query = {};
-        this.onLoad(this.page);
-      },
-      searchChange(params, done) {
-        this.query = params;
-        this.page.currentPage = 1;
-        this.onLoad(this.page, params);
-        done();
-      },
-      selectionChange(list) {
-        this.selectionList = list;
-      },
       handleDelete() {
         if (this.selectionList.length === 0) {
           this.$message.warning("请选择至少一条数据");
@@ -247,11 +235,28 @@
       },
       beforeOpen(done, type) {
         if (["edit", "view"].includes(type)) {
-          getDict(this.form.id).then(res => {
+          getDetail(this.form.id).then(res => {
             this.form = res.data.data;
           });
         }
         done();
+      },
+      searchReset() {
+        this.query = {};
+        this.onLoad(this.page);
+      },
+      searchChange(params, done) {
+        this.query = params;
+        this.page.currentPage = 1;
+        this.onLoad(this.page, params);
+        done();
+      },
+      selectionChange(list) {
+        this.selectionList = list;
+      },
+      selectionClear() {
+        this.selectionList = [];
+        this.$refs.crud.toggleSelection();
       },
       currentChange(currentPage){
         this.page.currentPage = currentPage;
@@ -262,12 +267,11 @@
       onLoad(page, params = {}) {
         this.loading = true;
         getList(page.currentPage, page.pageSize, Object.assign(params, this.query)).then(res => {
-          this.data = res.data.data;
+          const data = res.data.data;
+          this.page.total = data.total;
+          this.data = data.records;
           this.loading = false;
-          getDictTree().then(res => {
-            const column = this.findObject(this.option.column, "parentId");
-            column.dicData = res.data.data;
-          });
+          this.selectionClear();
         });
       }
     }
