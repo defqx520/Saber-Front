@@ -1,6 +1,7 @@
 <template>
   <basic-container>
-    <el-row v-for="(item,index) in formList" :key="index" >
+    <div style="font-weight: bold;margin-top:5px; margin-bottom: 5px ">{{title}}</div>
+    <el-row v-for="(item,index) in formList" :key="index" style="color:#606266;padding-left: 10px;">
       <el-col :span="4"><div class="title" :title="item.label">{{item.label}}</div></el-col>
       <el-col :span="1"><div >：</div></el-col>
       <el-col :span="19"><div class="content" :title="item.content">{{item.content}}</div></el-col>
@@ -11,19 +12,15 @@
 <script>
 
   export default {
-    // props: {
-    //   formList:{
-    //     type: Array,
-    //     default: []
-    //   }
-    // },
-    data() {
-      return {
-        formList : [
-          {label: "表单一1111111111111111111222222222222", content: "内容1111111111111111"},
-          {label: "表单二", content: "内容1"}
-          ]
-      };
+    props: {
+      formList:{
+        type: Array,
+        default: []
+      },
+      title:{
+        type: String,
+        default: '标题缺失'
+      }
     }
   }
 

@@ -10,3 +10,31 @@ export const getTaskInfo = (taskId, type) => {
     }
   })
 }
+
+export const downloadFile = () => {
+  return request({
+    url: '/api/download',
+    method: 'get',
+    resultType: 'blob'
+  })
+}
+
+export const fetchTableData = (tableName,attachId,currentPage) => {
+  return request({
+    url: '/api/task/show/fileData',
+    method: 'get',
+    params: {
+      tableName,attachId,currentPage
+    }
+  })
+}
+
+export const fetchTableColumn = (tableName) => {
+  return request({
+    url: '/api/task/show/getColumn',
+    method: 'get',
+    params: {
+      tableName
+    }
+  })
+}
