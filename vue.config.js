@@ -1,5 +1,5 @@
 module.exports = {
-  lintOnSave: true,
+  lintOnSave: false,
   productionSourceMap: false,
   chainWebpack: (config) => {
     //忽略的打包文件
